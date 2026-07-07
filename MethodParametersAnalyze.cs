@@ -24,17 +24,17 @@ public class MethodParametersAnalyze : Analyze
         bool inString = false;
         bool inChar = false;
 
-        int bracePositionCount = 0; // Баланс фигурных скобок { }
+        int bracePositionCount = 0; // Баланс фигурных скобок
 
         while (index < length)
         {
             char ch = fileContent[index];
 
-            // --- 1. Обработка переносов строк ---
+            //Обработка переносов строк
             if (ch == '\n') { inSingleLineComment = false; index++; continue; }
             if (ch == '\r') { index++; continue; }
 
-            // --- 2. Пропускаем комментарии и строки ---
+            //Пропускаем комментарии и строки
             if (inSingleLineComment) { index++; continue; }
             if (inMultiLineComment)
             {
@@ -61,18 +61,18 @@ public class MethodParametersAnalyze : Analyze
                 continue;
             }
 
-            // --- 3. Проверка на начало комментариев и строк ---
+            //Проверка на начало комментариев и строк
             if (ch == '/' && index + 1 < length && fileContent[index + 1] == '/') { inSingleLineComment = true; index += 2; continue; }
             if (ch == '/' && index + 1 < length && fileContent[index + 1] == '*') { inMultiLineComment = true; index += 2; continue; }
             if (ch == '"') { inString = true; index++; continue; }
             if (ch == '\'') { inChar = true; index++; continue; }
 
-            // --- 4. Логика поиска методов по открывающей скобке ---
+            //Логика поиска методов по открывающей скобке
             if (ch == '{')
             {
                 bracePositionCount++;
                 
-                // Проверяем методы на уровне класса (обычно уровень вложенности 2 или 3)
+                // Проверяем методы на уровне класса
                 if (bracePositionCount == 2 || bracePositionCount == 3)
                 {
                     // Вызываем метод анализа параметров
@@ -95,13 +95,13 @@ public class MethodParametersAnalyze : Analyze
         return invalidMethods.ToArray();
     }
 
-    // Метод "отматывает" код назад, считает запятые внутри круглых скобок и вытаскивает имя
+    // Метод отматывает код назад, считает запятые внутри круглых скобок и вытаскивает имя
     private string AnalyzeMethodParams(string code, int openBraceIndex, out int paramCount)
     {
         paramCount = 0;
         int i = openBraceIndex - 1;
         
-        // Шаг А: Ищем закрывающую круглую скобку ')' метода
+        // Ищем закрывающую круглую скобку ')' метода
         while (i > 0 && code[i] != ')')
         {
             if (code[i] == ';' || code[i] == '}') return null; 
@@ -111,7 +111,7 @@ public class MethodParametersAnalyze : Analyze
 
         int closeParenthesisIndex = i;
 
-        // Шаг Б: Идем назад до открывающей скобки '(' и считаем параметры
+        // Идем назад до открывающей скобки '(' и считаем параметры
         int parenthesisCount = 1;
         int commaCount = 0;
         bool hasContent = false;
@@ -144,10 +144,10 @@ public class MethodParametersAnalyze : Analyze
             paramCount = commaCount + 1;
         }
 
-        // Шаг В: Пропускаем пробелы перед именем метода
+        // Пропускаем пробелы перед именем метода
         while (i > 0 && char.IsWhiteSpace(code[i])) i--;
 
-        // Шаг Г: Считываем имя метода
+        // Считываем имя метода
         int nameEnd = i + 1;
         while (i >= 0 && (char.IsLetterOrDigit(code[i]) || code[i] == '_')) i--;
         int nameStart = i + 1;
