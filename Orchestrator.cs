@@ -7,9 +7,9 @@ public class Orchestrator
 {
     private static readonly Analyz[] _tests = new Analyz[10];
 
-    public static bool[] StartTest(string text)
+    public static string[] startTest(string text)
     {
-        var results = new bool[_tests.Length];
+        var results[] = new string[_tests.Length][];
         Parallel.For(0, _tests.Length, i =>
         {
             try
@@ -22,11 +22,11 @@ public class Orchestrator
                 results[i] = false;
             }
         });
-
+        sendResults(results)
         return results;
     }
     //метод для отсылки результатов на вывод
-    private static void sendResults(bool[] results)
+    private static void sendResults(string[][] results)
     {
         //TODO
     }
