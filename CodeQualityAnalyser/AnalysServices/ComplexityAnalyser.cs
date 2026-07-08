@@ -1,6 +1,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.IO;
 
 namespace CodeQualityAnalyser;
 
@@ -11,6 +12,7 @@ public class ComplexityAnalyser : IAnalyser
     public List<string> GetAnalysis(SyntaxTree tree)
     {
         var errors = new List<string>();
+        var fileName = Path.GetFileName(tree.FilePath);
         var root = tree.GetRoot();
         var methods = root.DescendantNodes().OfType<MethodDeclarationSyntax>();
 
@@ -21,7 +23,7 @@ public class ComplexityAnalyser : IAnalyser
 
             if (walker.Score > MaxComplexity)
             {
-                errors.Add($"[Complexity] Метод '{method.Identifier.Text}' слишком сложный. Его цикломатическая сложность = {walker.Score} (максимум {MaxComplexity}).");
+                errors.Add($"[Complexity] {fileName}: Метод '{method.Identifier.Text}' слишком сложный. Его цикломатическая сложность = {walker.Score} (максимум {MaxComplexity}).");
             }
         }
 
