@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Code Quality Coach</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/site.css" rel="stylesheet">
+</head>
+<body>
+    <header class="page-header py-4 mb-4">
+        <div class="container">
+            <h1 class="h3 mb-1">Code Quality Coach</h1>
+            <p class="text-muted mb-0">Помощник по качеству C# кода</p>
+        </div>
+    </header>
+
+    <main class="container pb-5">
+        <div id="status-alert" class="alert alert-danger d-none" role="alert"></div>
+
+        <section class="upload-card card mb-4">
+            <div class="card-body p-4">
+                <h2 class="h5 mb-3">Загрузка решения</h2>
+                <p class="text-muted">
+                    Выберите файл решения (<code>.sln</code>) для проверки ошибок.
+                </p>
+
+                <form id="upload-form">
+                    <label class="upload-area d-block mb-3" for="solution-file">
+                        <div class="mb-2">📁</div>
+                        <div class="fw-medium">Нажмите, чтобы выбрать файл</div>
+                        <div id="file-name" class="text-muted small mt-2">Файл не выбран</div>
+                        <input type="file" id="solution-file" accept=".sln" required>
+                    </label>
+
+                    <button type="submit" id="analyze-button" class="btn btn-primary" disabled>
+                        Запустить анализ
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <section id="results-section" class="d-none">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h2 class="h5 mb-3">Результаты анализа</h2>
+                    <div id="results-summary" class="text-muted"></div>
+                </div>
+            </div>
+
+            <div id="issues-list"></div>
+        </section>
+    </main>
+
+    <script src="/js/apiClient.js"></script>
+    <script src="/js/app.js"></script>
+</body>
+</html>

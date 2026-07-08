@@ -1,0 +1,73 @@
+:root {
+    --accent: #2563eb;
+    --accent-hover: #1d4ed8;
+    --surface: #f8fafc;
+    --border: #e2e8f0;
+}
+
+body {
+    background-color: var(--surface);
+    color: #1e293b;
+}
+
+.page-header {
+    border-bottom: 1px solid var(--border);
+    background: #fff;
+}
+
+.upload-card {
+    border: 1px solid var(--border);
+    box-shadow: 0 1px 3px rgb(15 23 42 / 6%);
+}
+
+.upload-area {
+    border: 2px dashed var(--border);
+    border-radius: 0.5rem;
+    padding: 2rem 1rem;
+    text-align: center;
+    transition: border-color 0.2s, background-color 0.2s;
+    cursor: pointer;
+}
+
+.upload-area:hover {
+    border-color: var(--accent);
+    background-color: #eff6ff;
+}
+
+.upload-area input[type="file"] {
+    display: none;
+}
+
+.issue-card {
+    border-left: 4px solid var(--accent);
+}
+
+.recommendation {
+    background: #f1f5f9;
+    border-radius: 0.375rem;
+    padding: 0.75rem;
+}
+
+.btn-primary {
+    background-color: var(--accent);
+    border-color: var(--accent);
+}
+
+.btn-primary:hover:not(:disabled) {
+    background-color: var(--accent-hover);
+    border-color: var(--accent-hover);
+}
+
+.btn-primary:disabled {
+    opacity: 0.65;
+}
+
+.btn-group-sm .btn.active {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+}
+
+#export-actions .btn {
+    white-space: nowrap;
+}
