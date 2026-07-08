@@ -7,25 +7,15 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CodeAnalyzer;
 
-public interface Analyze
-{
-    string[] startTest(string fileContent);
-}
-
 public class MethodSizeAnalyze : Analyze
 {
-    // Максимально допустимое количество строк
     private const int MaxLineCount = 30;
 
-    public string[] startTest(string fileContent)
+    public string[] startTest(SyntaxNode root)
     {
         var invalidMethods = new List<string>();
 
-        // Парсинг в синтаксическое дерево Roslyn
-        SyntaxTree tree = CSharpSyntaxTree.ParseText(fileContent);
-        SyntaxNode root = tree.GetRoot();
-
-        // Поиск всех объявлений методов в дереве
+        // Поиск всех объявлений методов в переданном корневом узле дерева
         var methods = root.DescendantNodes().OfType<MethodDeclarationSyntax>();
 
         foreach (var method in methods)
@@ -47,10 +37,11 @@ public class MethodSizeAnalyze : Analyze
             // Проверка превышения лимита
             if (methodLines > MaxLineCount)
             {
+                // Добавление имени метода в список нарушителей
                 invalidMethods.Add(method.Identifier.Text);
             }
         }
-        
+
         return invalidMethods.ToArray();
     }
 }
