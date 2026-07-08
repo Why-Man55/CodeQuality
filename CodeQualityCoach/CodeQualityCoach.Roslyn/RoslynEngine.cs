@@ -1,37 +1,33 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace CodeQualityCoach.Roslyn;
 
 public class RoslynEngine
 {
-    public async Task<List<string>> AnalyzeFilesAsync(List<string> filePaths)
+    /// Метод принимает список путей к файлам 
+    
+    public async Task<List<SyntaxTree>> GetSyntaxTreesAsync(List<string> filePaths)
     {
-        var errorsList = new List<string>();
         var syntaxTrees = new List<SyntaxTree>();
 
-        //Читаем все переданные файлы студента
         foreach (var path in filePaths)
         {
             if (File.Exists(path))
             {
                 string code = await File.ReadAllTextAsync(path);
-                syntaxTrees.Add(CSharpSyntaxTree.ParseText(code));
+                
+                // Превращаем текст в синтаксическое дерево Roslyn
+                var tree = CSharpSyntaxTree.ParseText(code);
+                
+                
+                syntaxTrees.Add(tree);
             }
         }
-
-        //Создаем компиляцию в памяти 
-        var compilation = CSharpCompilation.Create("StudentProjectAnalysis")
-            .AddReferences(MetadataReference.CreateFromFile(typeof(object).Assembly.Location))
-            .AddSyntaxTrees(syntaxTrees);
-
-        //Перебираем файлы для анализа семантики
-        foreach (var syntaxTree in compilation.SyntaxTrees)
-        {
-            var semanticModel = compilation.GetSemanticModel(syntaxTree);
-            var root = await syntaxTree.GetRootAsync();
-        }
-
-        return errorsList;
+        
+        return syntaxTrees;
     }
 }
