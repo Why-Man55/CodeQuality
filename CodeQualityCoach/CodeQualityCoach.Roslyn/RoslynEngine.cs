@@ -21,7 +21,7 @@ public class RoslynEngine
                 string code = await File.ReadAllTextAsync(path);
                 
                 // Превращаем текст в синтаксическое дерево Roslyn
-                var tree = CSharpSyntaxTree.ParseText(code);
+                var tree = CSharpSyntaxTree.ParseText(code, path: path);
                 
                 
                 syntaxTrees.Add(tree);
