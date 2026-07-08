@@ -101,7 +101,12 @@ uploadForm.addEventListener('submit', async (event) => {
 
     const file = fileInput.files[0];
     if (!file) {
-        showAlert('Выберите файл решения (.sln).');
+        showAlert('Выберите файл .sln или .zip.');
+        return;
+    }
+
+    if (!file.name.toLowerCase().endsWith('.sln') && !file.name.toLowerCase().endsWith('.zip')) {
+        showAlert('Поддерживаются файлы .sln и .zip.');
         return;
     }
 

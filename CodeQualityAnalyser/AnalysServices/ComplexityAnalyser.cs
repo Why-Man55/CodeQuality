@@ -1,9 +1,8 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.IO;
 
-namespace CodeQualityAnalyser;
+namespace CodeQualityAnalyser.AnalysServices;
 
 public class ComplexityAnalyser : IAnalyser
 {

@@ -22,7 +22,7 @@
             <div class="card-body p-4">
                 <h2 class="h5 mb-3">Загрузка решения</h2>
                 <p class="text-muted">
-                    Выберите файл решения (<code>.sln</code>) для проверки ошибок.
+                    Выберите файл решения (<code>.sln</code>) или ZIP-архив с исходным кодом.
                 </p>
 
                 <form id="upload-form">
@@ -30,7 +30,7 @@
                         <div class="mb-2">📁</div>
                         <div class="fw-medium">Нажмите, чтобы выбрать файл</div>
                         <div id="file-name" class="text-muted small mt-2">Файл не выбран</div>
-                        <input type="file" id="solution-file" accept=".sln" required>
+                        <input type="file" id="solution-file" accept=".sln,.zip" required>
                     </label>
 
                     <button type="submit" id="analyze-button" class="btn btn-primary" disabled>

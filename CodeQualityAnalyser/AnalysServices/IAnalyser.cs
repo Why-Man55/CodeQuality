@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 
-namespace CodeQualityAnalyser;
+namespace CodeQualityAnalyser.AnalysServices;
 
 // возвращаем список ожибок (например номера строк)
 public interface IAnalyser

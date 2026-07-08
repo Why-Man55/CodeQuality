@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang='ru'>
+<head>
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+<title>Code Quality Report</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f0f2f5;
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+  }
+  .container {
+      max-width: 1100px;
+      width: 100%;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+      padding: 40px;
+  }
+  .header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 8px;
+  }
+  .header-icon { font-size: 32px; }
+  h1 {
+      font-size: 26px;
+      color: #1a1a2e;
+      font-weight: 700;
+  }
+  .subtitle {
+      color: #6b7280;
+      font-size: 15px;
+      margin-bottom: 28px;
+      border-bottom: 2px solid #e5e7eb;
+      padding-bottom: 16px;
+  }
+  .summary {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+  }
+  .summary-card {
+      flex: 1;
+      min-width: 140px;
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 18px 22px;
+      text-align: center;
+      border: 1px solid #e5e7eb;
+      transition: transform 0.2s;
+  }
+  .summary-card:hover { transform: translateY(-2px); }
+  .summary-number {
+      font-size: 32px;
+      font-weight: 700;
+      color: #1a1a2e;
+  }
+  .summary-label {
+      font-size: 14px;
+      color: #6b7280;
+      margin-top: 4px;
+  }
+  .critical-color { color: #dc2626; }
+  .warning-color { color: #f59e0b; }
+  .info-color { color: #3b82f6; }
+  h2 {
+      font-size: 20px;
+      color: #1a1a2e;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+  }
+  table {
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+  th {
+      background: #1a1a2e;
+      color: white;
+      padding: 14px 16px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 14px;
+  }
+  td {
+      padding: 13px 16px;
+      border-bottom: 1px solid #e5e7eb;
+      font-size: 14px;
+      vertical-align: top;
+  }
+  tr:hover td { background: #f8fafc; }
+  .critical { color: #dc2626; font-weight: 600; }
+  .warning { color: #f59e0b; font-weight: 600; }
+  .info { color: #3b82f6; font-weight: 600; }
+  .suggestion {
+      background: #ecfdf5;
+      padding: 6px 10px;
+      border-radius: 6px;
+      display: inline-block;
+      font-size: 13px;
+      color: #065f46;
+  }
+  .success-box {
+      background: #ecfdf5;
+      border: 2px solid #10b981;
+      border-radius: 12px;
+      padding: 40px;
+      text-align: center;
+      margin-top: 12px;
+  }
+  .success-box .emoji { font-size: 48px; display: block; margin-bottom: 12px; }
+  .success-box h2 {
+      color: #065f46;
+      justify-content: center;
+      margin-bottom: 0;
+  }
+  .footer {
+      margin-top: 32px;
+      text-align: center;
+      color: #9ca3af;
+      font-size: 13px;
+      border-top: 1px solid #e5e7eb;
+      padding-top: 20px;
+  }
+</style>
+</head>
+<body>
+<div class='container'>
+<div class='header'>
+<span class='header-icon'>📊</span>
+<h1>Отчет по качеству кода</h1>
+</div>
+<div class='subtitle'>📁 CodeQualityAnalyser &nbsp;·&nbsp; 🕐 09.07.2026 00:18</div>
+<div class='summary'>
+<div class='summary-card'>
+<div class='summary-number'>17</div>
+<div class='summary-label'>Всего проблем</div>
+</div>
+<div class='summary-card'>
+<div class='summary-number critical-color'>0</div>
+<div class='summary-label'>🔴 Критических</div>
+</div>
+<div class='summary-card'>
+<div class='summary-number warning-color'>17</div>
+<div class='summary-label'>⚠️ Предупреждений</div>
+</div>
+<div class='summary-card'>
+<div class='summary-number info-color'>0</div>
+<div class='summary-label'>ℹ️ Информационных</div>
+</div>
+</div>
+<h2>🔍 Детали проблем</h2>
+<table>
+<thead>
+<tr>
+<th>Файл</th>
+<th>Стр.</th>
+<th>Важность</th>
+<th>Правило</th>
+<th>Описание</th>
+<th>Исправление</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Orchestrator.cs</strong></td>
+<td>0</td>
+<td><span class='warning'>⚠️ Warning</span></td>
+<td><code style='background:#f1f3f4;padding:2px 8px;border-radius:4px;font-size:13px;'>METHOD001</code></td>
+<td>Метод 'startTest' содержит более 30 строк кода.</td>
+<td><span class='suggestion'>💡 Разбейте метод на несколько меньших методов с чёткой ответственностью.</span></td>
+</tr>
+<tr>
+<td><strong>Orchestrator.cs</strong></td>
+<td>0</td>
+<td><span class='warning'>⚠️ Warning</span></td>
+<td><code style='background:#f1f3f4;padding:2px 8px;border-radius:4px;font-size:13px;'>ASYNC003</code></td>
+<td>Асинхронный метод 'startTest' не принимает CancellationToken.</td>
+<td><span class='suggestion'>💡 Добавьте параметр CancellationToken cancellationToken = default и передавайте его дальше.</span></td>
+</tr>
+<tr>
+<td><strong>TaskResultAnalyz.cs</strong></td>
+<td>0</td>
+<td><span class='warning'>⚠️ Warning</span></td>
+<td><code style='background:#f1f3f4;padding:2px 8px;border-radius:4px;font-size:13px;'>METHOD001</code></td>
+<td>Метод 'startTest' содержит более 30 строк кода.</td>
+<td><span class='suggestion'>💡 Разбейте метод на несколько меньших методов с чёткой ответственностью.</span></td>
+</tr>
+<tr>
+<td><strong>AnalysisEndpoints.cs</strong></td>
+<td>0</td>
+<td><span class='warning'>⚠️ Warning</span></td>
+<td><code style='background:#f1f3f4;padding:2px 8px;border-radius:4px;font-size:13px;'>METHOD001</code></td>
+<td>Метод 'MapAnalysisEndpoints' содержит более 30 строк кода.</td>
+<td><span class='suggestion'>💡 Разбейте метод на несколько меньших методов с чёткой ответственностью.</span></td>
+</tr>
+<tr>
+<td><strong>ExplanationGenerator.cs</strong></td>
+<td>0</td>
+<td><span class='warning'>⚠️ Warning</span></td>
+<td><code style='background:#f1f3f4;padding:2px 8px;border-radius:4px;font-size:13px;'>COMPLEX001</code></td>
+<td>[Complexity] ExplanationGenerator.cs: Метод 'Generate' слишком сложный. Его цикломатическая сложность = 9 (максимум 5).</td>
+<td><span class='suggestion'>💡 Разбейте метод на несколько меньших методов.</span></td>
+</tr>
+<tr>
+<td><strong>AnalyzerRunner.cs</strong></td>
+<td>0</td>
+<td><span class='warning'>⚠️ Warning</span></td>
+<td><code style='background:#f1f3f4;padding:2px 8px;border-radius:4px;font-size:13px;'>COMPLEX001</code></td>
+<td>[Complexity] AnalyzerRunner.cs: Метод 'RunAndMapAsync' слишком сложный. Его цикломатическая сложность = 7 (максимум 5).</td>
+<td><span class='suggestion'>💡 Разбейте метод на несколько меньших методов.</span></td>
+</tr>
+<tr>
+<td><strong>AnalyzerRunner.cs</strong></td>
+<td>0</td>
+<td><span class='warning'>⚠️ Warning</span></td>
+<td><code style='background:#f1f3f4;padding:2px 8px;border-radius:4px;font-size:13px;'>METHOD001</code></td>
+<td>Метод 'RunAndMapAsync' содержит более 30 строк кода.</td>
+<td><span class='suggestion'>💡 Разбейте метод на несколько меньших методов с чёткой ответственностью.</span></td>
+</tr>
+<tr>
+<td><strong>OrchestratorIssueMapper.cs</strong></td>
+<td>0</td>
+<td><span class='warning'>⚠️ Warning</span></td>
+<td><code style='background:#f1f3f4;padding:2px 8px;border-radius:4px;font-size:13px;'>PARAM001</code></td>
+<td>Метод 'CreateIssue' принимает более 4 параметров.</td>
+<td><span class='suggestion'>💡 Сократите список параметров или сгруппируйте их в отдельный класс/record.</span></td>
+</tr>
+<tr>
+<td><strong>FileReportWriter.cs</strong></td>
+<td>0</td>
+<td><span class='warning'>⚠️ Warning</span></td>
+<td><code style='background:#f1f3f4;padding:2px 8px;border-radius:4px;font-size:13px;'>ASYNC003</code></td>
+<td>Асинхронный метод 'SaveReportAsync' не принимает CancellationToken.</td>
+<td><span class='suggestion'>💡 Добавьте параметр CancellationToken cancellationToken = default и передавайте его дальше.</span></td>
+</tr>
+<tr>
+<td><strong>Program.cs</strong></td>
+<td>0</td>
+<td><span class='warning'>⚠️ Warning</span></td>
+<td><code style='background:#f1f3f4;padding:2px 8px;border-radius:4px;font-size:13px;'>ASYNC003</code></td>
+<td>Асинхронный метод 'Main' не принимает CancellationToken.</td>
+<td><span class='suggestion'>💡 Добавьте параметр CancellationToken cancellationToken = default и передавайте его дальше.</span></td>
+</tr>
+<tr>
+<td><strong>ReportService.cs</strong></td>
+<td>0</td>
+<td><span class='warning'>⚠️ Warning</span></td>
+<td><code style='background:#f1f3f4;padding:2px 8px;border-radius:4px;font-size:13px;'>ASYNC003</code></td>
+<td>Асинхронный метод 'GenerateAllReportsAsync' не принимает CancellationToken.</td>
+<td><span class='suggestion'>💡 Добавьте параметр CancellationToken cancellationToken = default и передавайте его дальше.</span></td>
+</tr>
+<tr>
+<td><strong>AnalysisService.cs</strong></td>
+<td>0</td>
+<td><span class='warning'>⚠️ Warning</span></td>
+<td><code style='background:#f1f3f4;padding:2px 8px;border-radius:4px;font-size:13px;'>CATCH001</code></td>
+<td>[AntiPattern] AnalysisService.cs: Обнаружен пустой блок catch! Нельзя молча подавлять ошибки. Добавь логирование или 'throw;'.</td>
+<td><span class='suggestion'>💡 Не подавляйте исключения молча. Добавьте логирование или используйте throw; для повторного выброса.</span></td>
+</tr>
+<tr>
+<td><strong>AnalysisService.cs</strong></td>
+<td>0</td>
+<td><span class='warning'>⚠️ Warning</span></td>
+<td><code style='background:#f1f3f4;padding:2px 8px;border-radius:4px;font-size:13px;'>METHOD001</code></td>
+<td>Метод 'AnalyzeSolutionAsync' содержит более 30 строк кода.</td>
+<td><span class='suggestion'>💡 Разбейте метод на несколько меньших методов с чёткой ответственностью.</span></td>
+</tr>
+<tr>
+<td><strong>RoslynEngine.cs</strong></td>
+<td>0</td>
+<td><span class='warning'>⚠️ Warning</span></td>
+<td><code style='background:#f1f3f4;padding:2px 8px;border-radius:4px;font-size:13px;'>ASYNC003</code></td>
+<td>Асинхронный метод 'GetSyntaxTreesAsync' не принимает CancellationToken.</td>
+<td><span class='suggestion'>💡 Добавьте параметр CancellationToken cancellationToken = default и передавайте его дальше.</span></td>
+</tr>
+<tr>
+<td><strong>ReportDataHelper.cs</strong></td>
+<td>0</td>
+<td><span class='warning'>⚠️ Warning</span></td>
+<td><code style='background:#f1f3f4;padding:2px 8px;border-radius:4px;font-size:13px;'>METHOD001</code></td>
+<td>Метод 'GetReportFromAnalyzers' содержит более 30 строк кода.</td>
+<td><span class='suggestion'>💡 Разбейте метод на несколько меньших методов с чёткой ответственностью.</span></td>
+</tr>
+<tr>
+<td><strong>HtmlReportGenerator.cs</strong></td>
+<td>0</td>
+<td><span class='warning'>⚠️ Warning</span></td>
+<td><code style='background:#f1f3f4;padding:2px 8px;border-radius:4px;font-size:13px;'>METHOD001</code></td>
+<td>Метод 'Generate' содержит более 30 строк кода.</td>
+<td><span class='suggestion'>💡 Разбейте метод на несколько меньших методов с чёткой ответственностью.</span></td>
+</tr>
+<tr>
+<td><strong>TxtReportGenerator.cs</strong></td>
+<td>0</td>
+<td><span class='warning'>⚠️ Warning</span></td>
+<td><code style='background:#f1f3f4;padding:2px 8px;border-radius:4px;font-size:13px;'>METHOD001</code></td>
+<td>Метод 'Generate' содержит более 30 строк кода.</td>
+<td><span class='suggestion'>💡 Разбейте метод на несколько меньших методов с чёткой ответственностью.</span></td>
+</tr>
+</tbody>
+</table>
+<div class='footer'>
+09.07.2026 00:18 · Code Quality Coach
+</div>
+</div>
+</body>
+</html>
