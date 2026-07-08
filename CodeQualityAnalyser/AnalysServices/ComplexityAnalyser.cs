@@ -21,8 +21,7 @@ public class ComplexityAnalyser : IAnalyser
 
             if (walker.Score > MaxComplexity)
             {
-                errors.Add($"[Complexity] Метод '{method.Identifier.Text}' слишком сложный. " +
-                           $"Его цикломатическая сложность = {walker.Score} (максимум {MaxComplexity}).");
+                errors.Add($"[Complexity] Метод '{method.Identifier.Text}' слишком сложный. Его цикломатическая сложность = {walker.Score} (максимум {MaxComplexity}).");
             }
         }
 
@@ -91,7 +90,7 @@ public class ComplexityAnalyser : IAnalyser
 
             base.VisitBinaryExpression(node);
         }
-
+        /*
         public override void VisitLocalFunctionStatement(LocalFunctionStatementSyntax node)
         {
         }
@@ -103,5 +102,6 @@ public class ComplexityAnalyser : IAnalyser
         public override void VisitSimpleLambdaExpression(SimpleLambdaExpressionSyntax node)
         {
         }
+        */
     }
 }
