@@ -9,18 +9,13 @@ namespace CodeAnalyzer;
 
 public class MethodParametersAnalyze : Analyze
 {
-    // Максимально допустимое количество параметров
     private const int MaxParameterCount = 4;
 
-    public string[] startTest(string fileContent)
+    public string[] startTest(SyntaxNode root)
     {
         var invalidMethods = new List<string>();
 
-        // Парсинг в синтаксическое дерево Roslyn
-        SyntaxTree tree = CSharpSyntaxTree.ParseText(fileContent);
-        SyntaxNode root = tree.GetRoot();
-
-        // Поиск всех объявлений методов
+        // Поиск всех объявлений методов в переданном корневом узле дерева
         var methods = root.DescendantNodes().OfType<MethodDeclarationSyntax>();
 
         foreach (var method in methods)
@@ -34,7 +29,7 @@ public class MethodParametersAnalyze : Analyze
                 continue;
             }
 
-            // Получение точного количества параметров
+            // Получение точного количества параметров из синтаксического узла
             int actualParameterCount = parameterList.Parameters.Count;
 
             // Проверка превышения лимита
@@ -45,7 +40,6 @@ public class MethodParametersAnalyze : Analyze
             }
         }
 
-        // Возврат массива строк согласно интерфейсу
         return invalidMethods.ToArray();
     }
 }
