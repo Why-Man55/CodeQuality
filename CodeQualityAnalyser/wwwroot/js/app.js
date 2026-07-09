@@ -18,6 +18,7 @@ const statusAlert = document.getElementById('status-alert');
 const resultsSection = document.getElementById('results-section');
 const resultsSummary = document.getElementById('results-summary');
 const issuesList = document.getElementById('issues-list');
+const exportActions = document.getElementById('export-actions');
 
 function showAlert(message, type = 'danger') {
     statusAlert.textContent = message;
@@ -29,9 +30,23 @@ function hideAlert() {
     statusAlert.classList.add('d-none');
 }
 
+function hasSelectedFile() {
+    return Boolean(fileInput.files[0]);
+}
+
 function setLoading(isLoading) {
-    analyzeButton.disabled = isLoading;
+    analyzeButton.disabled = isLoading || !hasSelectedFile();
     analyzeButton.textContent = isLoading ? 'Анализ...' : 'Запустить анализ';
+}
+
+function setExportDisabled(isDisabled) {
+    exportActions.querySelectorAll('button').forEach(button => {
+        button.disabled = isDisabled;
+    });
+}
+
+function setExportLoading(isLoading) {
+    setExportDisabled(isLoading || !hasSelectedFile());
 }
 
 function formatDate(isoString) {
@@ -65,7 +80,7 @@ function renderIssue(issue) {
 
 function escapeHtml(text) {
     const div = document.createElement('div');
-    div.textContent = text;
+    div.textContent = text ?? '';
     return div.innerHTML;
 }
 
@@ -89,10 +104,23 @@ function renderResults(result) {
     resultsSection.classList.remove('d-none');
 }
 
+function validateSelectedFile(file) {
+    if (!file) {
+        return 'Выберите файл .sln или .zip.';
+    }
+
+    if (!file.name.toLowerCase().endsWith('.sln') && !file.name.toLowerCase().endsWith('.zip')) {
+        return 'Поддерживаются файлы .sln и .zip.';
+    }
+
+    return null;
+}
+
 fileInput.addEventListener('change', () => {
     const file = fileInput.files[0];
     fileName.textContent = file ? file.name : 'Файл не выбран';
     analyzeButton.disabled = !file;
+    setExportDisabled(!file);
 });
 
 uploadForm.addEventListener('submit', async (event) => {
@@ -100,13 +128,9 @@ uploadForm.addEventListener('submit', async (event) => {
     hideAlert();
 
     const file = fileInput.files[0];
-    if (!file) {
-        showAlert('Выберите файл .sln или .zip.');
-        return;
-    }
-
-    if (!file.name.toLowerCase().endsWith('.sln') && !file.name.toLowerCase().endsWith('.zip')) {
-        showAlert('Поддерживаются файлы .sln и .zip.');
+    const validationError = validateSelectedFile(file);
+    if (validationError) {
+        showAlert(validationError);
         return;
     }
 
@@ -123,7 +147,41 @@ uploadForm.addEventListener('submit', async (event) => {
     }
 });
 
+exportActions.addEventListener('click', async (event) => {
+    const button = event.target.closest('button');
+    if (!button) {
+        return;
+    }
+
+    const file = fileInput.files[0];
+    const validationError = validateSelectedFile(file);
+    if (validationError) {
+        showAlert(validationError);
+        return;
+    }
+
+    const format = button.dataset.reportFormat;
+
+    setExportLoading(true);
+    hideAlert();
+
+    try {
+        const report = format
+            ? await ApiClient.downloadReport(file, format)
+            : await ApiClient.downloadReportsArchive(file);
+
+        saveBlob(report.blob, report.fileName);
+        showAlert('Отчет сформирован и скачан.', 'success');
+    } catch (error) {
+        showAlert(error.message);
+    } finally {
+        setExportLoading(false);
+    }
+});
+
 document.addEventListener('DOMContentLoaded', async () => {
+    setExportDisabled(!hasSelectedFile());
+
     try {
         await ApiClient.checkHealth();
     } catch {

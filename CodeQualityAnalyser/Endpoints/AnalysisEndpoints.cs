@@ -2,6 +2,8 @@ using CodeQualityAnalyser.Integration;
 using CodeQualityAnalyser.Practice;
 using CodeQualityAnalyser.Practice.ReportGenerators;
 using CodeQualityAnalyser.Services;
+using System.IO.Compression;
+using System.Text;
 
 namespace CodeQualityAnalyser.Endpoints;
 
@@ -17,6 +19,7 @@ public static class AnalysisEndpoints
 
         group.MapPost("/analyze", AnalyzeAsync).DisableAntiforgery();
         group.MapPost("/analyze/report/{format}", AnalyzeReportAsync).DisableAntiforgery();
+        group.MapPost("/analyze/reports", AnalyzeReportsArchiveAsync).DisableAntiforgery();
 
         return app;
     }
@@ -63,8 +66,54 @@ public static class AnalysisEndpoints
         var result = await analysisService.AnalyzeSolutionAsync(file, cancellationToken);
         var report = ReportMapper.ToReport(result);
         var content = generator.Generate(report);
+        var fileName = CreateReportFileName(result.ProjectName, format);
 
-        return Results.Content(content, GetContentType(format));
+        return Results.File(Encoding.UTF8.GetBytes(content), GetContentType(format), fileName);
+    }
+
+    private static async Task<IResult> AnalyzeReportsArchiveAsync(
+        IFormFile file,
+        IAnalysisService analysisService,
+        IReportService reportService,
+        CancellationToken cancellationToken)
+    {
+        var validationResult = ValidateUpload(file);
+        if (validationResult is not null)
+        {
+            return validationResult;
+        }
+
+        var result = await analysisService.AnalyzeSolutionAsync(file, cancellationToken);
+        var report = ReportMapper.ToReport(result);
+        var outputDirectory = Path.Combine(Path.GetTempPath(), "code-quality-reports", Guid.NewGuid().ToString("N"));
+
+        try
+        {
+            await reportService.GenerateAllReportsAsync(report, outputDirectory);
+
+            await using var archiveStream = new MemoryStream();
+            ZipFile.CreateFromDirectory(outputDirectory, archiveStream);
+            archiveStream.Position = 0;
+
+            return Results.File(
+                archiveStream.ToArray(),
+                "application/zip",
+                CreateReportFileName(result.ProjectName, "zip"));
+        }
+        finally
+        {
+            try
+            {
+                if (Directory.Exists(outputDirectory))
+                {
+                    Directory.Delete(outputDirectory, recursive: true);
+                }
+            }
+            catch
+            {
+                // Temporary report files can be cleaned by the OS later.
+            }
+        }
     }
 
     private static IResult? ValidateUpload(IFormFile file)
@@ -96,4 +145,15 @@ public static class AnalysisEndpoints
             "txt" => "text/plain; charset=utf-8",
             _ => "application/octet-stream"
         };
+
+    private static string CreateReportFileName(string projectName, string extension)
+    {
+        var safeName = string.Join("_", projectName.Split(Path.GetInvalidFileNameChars(), StringSplitOptions.RemoveEmptyEntries));
+        if (string.IsNullOrWhiteSpace(safeName))
+        {
+            safeName = "code-quality-report";
+        }
+
+        return $"{safeName}-report.{extension.ToLowerInvariant()}";
+    }
 }
