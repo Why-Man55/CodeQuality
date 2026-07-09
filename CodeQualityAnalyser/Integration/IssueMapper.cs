@@ -14,7 +14,7 @@ public static partial class IssueMapper
         return new IssueDto
         {
             RuleId = ruleId,
-            Title = ExtractTitle(message, ruleId),
+            Title = ExtractTitle(ruleId),
             Description = message,
             Recommendation = ExtractRecommendation(message),
             Severity = DetermineSeverity(message),
@@ -42,17 +42,17 @@ public static partial class IssueMapper
         return match.Success && int.TryParse(match.Groups[1].Value, out var line) ? line : 0;
     }
 
-    private static string ExtractTitle(string message, string ruleId) =>
+    private static string ExtractTitle(string ruleId) =>
         ruleId switch
         {
-            "ASYNC001" or "AsyncError" or "CQ001" => "Использование async void",
-            "TASK001" or "ASYNC002" => "Синхронное ожидание Task",
-            "ASYNC003" => "Отсутствует CancellationToken",
-            "Complexity" or "COMPLEX001" => "Высокая цикломатическая сложность",
-            "AntiPattern" or "CATCH001" => "Пустой блок catch",
-            "METHOD001" => "Слишком большой метод",
-            "PARAM001" => "Слишком много параметров",
-            _ => "Обнаружена проблема"
+            "ASYNC001" or "AsyncError" or "CQ001" => "Async void usage",
+            "TASK001" or "ASYNC002" => "Synchronous Task wait",
+            "ASYNC003" => "Missing CancellationToken",
+            "Complexity" or "COMPLEX001" => "High cyclomatic complexity",
+            "AntiPattern" or "CATCH001" => "Empty catch block",
+            "METHOD001" => "Method is too large",
+            "PARAM001" => "Too many method parameters",
+            _ => "Code quality issue"
         };
 
     private static string ExtractRecommendation(string message)
@@ -64,8 +64,7 @@ public static partial class IssueMapper
     private static string DetermineSeverity(string message)
     {
         if (message.Contains("Error", StringComparison.OrdinalIgnoreCase) ||
-            message.Contains("TASK001", StringComparison.OrdinalIgnoreCase) ||
-            message.Contains("⛔", StringComparison.OrdinalIgnoreCase))
+            message.Contains("TASK001", StringComparison.OrdinalIgnoreCase))
         {
             return "Error";
         }
@@ -84,9 +83,9 @@ public static partial class IssueMapper
     [GeneratedRegex(@"(?:^|\s)([\w./\\-]+\.cs):")]
     private static partial Regex FilePathRegex();
 
-    [GeneratedRegex(@"Строка:\s*(\d+)")]
+    [GeneratedRegex(@"(?:РЎС‚СЂРѕРєР°|Строка|Line):\s*(\d+)")]
     private static partial Regex LineRegex();
 
-    [GeneratedRegex(@"Исправление:\s*(.+)")]
+    [GeneratedRegex(@"(?:РСЃРїСЂР°РІР»РµРЅРёРµ|Исправление|Fix):\s*(.+)")]
     private static partial Regex RecommendationRegex();
 }

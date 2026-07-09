@@ -1,57 +1,44 @@
-using CodeQualityAnalyser.Integration;
+using CodeQualityAnalyser.AnalysServices;
 using Microsoft.CodeAnalysis;
 
 namespace CodeQualityAnalyser;
 
 public class Orchestrator
 {
-    private static readonly Analyze[] _tests =
+    private static readonly IAnalyser[] Tests =
     [
+        new AsyncVoidAnalyser(),
+        new ComplexityAnalyser(),
+        new EmptyCatchAnalyser(),
         new MethodSizeAnalyze(),
         new MethodParametersAnalyze(),
-        new CancellationTokenAnalyzeAdapter(),
-        new TaskResultAnalyzerAdapter()
+        new CancellationTokenAnalyze(),
+        new TaskResultAnalyzer()
     ];
 
-    // Метод стал async и теперь возвращает Task с массивом результатов
-    public static async Task<string[][]> startTest(SyntaxNode text)
+    public static async Task<List<string>> startTest(SyntaxTree tree)
     {
-        var tasks = new Task<string[]>[_tests.Length];
+        var tasks = new Task<List<string>>[Tests.Length];
 
-        for (int i = 0; i < _tests.Length; i++)
+        for (var i = 0; i < Tests.Length; i++)
         {
-            int index = i; // Локальная переменная для безопасного замыкания в многопоточности
+            var index = i;
 
-            // Task.Run запускает тест параллельно в пуле потоков
             tasks[index] = Task.Run(() =>
             {
                 try
                 {
-                    // Проверка на случай, если ячейка массива тестов пустая
-                    if (_tests[index] == null) return Array.Empty<string>();
-
-                    // Передаем готовый root в тест
-                    return _tests[index].startTest(text);
+                    return Tests[index].GetAnalysis(tree);
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Ошибка в тесте {index}: {ex.Message}");
-                    // В случае ошибки возвращаем пустой массив строк вместо false
-                    return Array.Empty<string>();
+                    Console.WriteLine($"Analyzer {Tests[index].GetType().Name} failed: {ex.Message}");
+                    return [];
                 }
             });
         }
-        
-        string[][] results = await Task.WhenAll(tasks);
 
-        // Отправка результатов
-        sendResults(results);
-
-        return results;
-    }
-
-    private static void sendResults(string[][] results)
-    {
-        // TODO
+        var results = await Task.WhenAll(tasks);
+        return results.SelectMany(result => result).ToList();
     }
 }

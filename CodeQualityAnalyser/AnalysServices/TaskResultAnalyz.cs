@@ -1,47 +1,33 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace CodeQualityAnalyser;
+namespace CodeQualityAnalyser.AnalysServices;
 
-public class TaskResultAnalyzer : Analyze
+public class TaskResultAnalyzer : IAnalyser
 {
-    public string[] startTest(string fileContent)
+    public List<string> GetAnalysis(SyntaxTree tree)
     {
         var issues = new List<string>();
-        SyntaxTree tree = CSharpSyntaxTree.ParseText(fileContent);
-        SyntaxNode root = tree.GetRoot();
+        var fileName = Path.GetFileName(tree.FilePath);
+        var root = tree.GetRoot();
 
-        // Ищем все обращения к .Result и .Wait()
         var suspiciousNodes = root.DescendantNodes()
-            .Where(node =>
+            .OfType<MemberAccessExpressionSyntax>()
+            .Where(memberAccess =>
             {
-                if (node is MemberAccessExpressionSyntax memberAccess)
-                {
-                    string memberName = memberAccess.Name.Identifier.Text;
-                    return memberName == "Result" || memberName == "Wait";
-                }
-                return false;
-            })
-            .ToList();
+                var memberName = memberAccess.Name.Identifier.Text;
+                return memberName is "Result" or "Wait";
+            });
 
         foreach (var node in suspiciousNodes)
         {
-            // Получаем строку с кодом
-            string codeSnippet = node.ToString();
-
-            // Получаем номер строки
-            var lineSpan = node.GetLocation().GetLineSpan();
-            int lineNumber = lineSpan.StartLinePosition.Line + 1;
-
-            // Формируем сообщение об ошибке
-            string issue = $"[TASK001] Синхронное ожидание Task: {codeSnippet} | " +
-                           $"Строка: {lineNumber} | " +
-                           $"Описание: Использование .Result или .Wait() может привести к deadlock'у. | " +
-                           $"Исправление: Используйте await вместо .Result/.Wait()";
-
-            issues.Add(issue);
+            var lineNumber = node.GetLocation().GetLineSpan().StartLinePosition.Line + 1;
+            issues.Add(
+                $"[TASK001] {fileName}: Synchronous Task wait: {node}. " +
+                $"Line: {lineNumber}. Description: Using .Result or .Wait() can cause a deadlock. " +
+                "Fix: Use await instead of .Result/.Wait().");
         }
-        return issues.ToArray();
+
+        return issues;
     }
 }

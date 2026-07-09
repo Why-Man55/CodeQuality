@@ -1,43 +1,38 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace CodeQualityAnalyser;
+namespace CodeQualityAnalyser.AnalysServices;
 
-public class MethodSizeAnalyze : Analyze
+public class MethodSizeAnalyze : IAnalyser
 {
     private const int MaxLineCount = 30;
 
-    public override string[] startTest(SyntaxNode root)
+    public List<string> GetAnalysis(SyntaxTree tree)
     {
-        var invalidMethods = new List<string>();
-
-        // Поиск всех объявлений методов в переданном корневом узле дерева
+        var errors = new List<string>();
+        var fileName = Path.GetFileName(tree.FilePath);
+        var root = tree.GetRoot();
         var methods = root.DescendantNodes().OfType<MethodDeclarationSyntax>();
 
         foreach (var method in methods)
         {
-            // Пропуск методов без тела
             if (method.Body == null)
             {
                 continue;
             }
 
-            // Получение позиций строк начала и конца тела метода
             var lineSpan = method.Body.GetLocation().GetLineSpan();
-            int startLine = lineSpan.StartLinePosition.Line;
-            int endLine = lineSpan.EndLinePosition.Line;
+            var methodLines = lineSpan.EndLinePosition.Line - lineSpan.StartLinePosition.Line - 1;
 
-            // Расчет количества строк внутри фигурных скобок
-            int methodLines = endLine - startLine - 1;
-
-            // Проверка превышения лимита
             if (methodLines > MaxLineCount)
             {
-                // Добавление имени метода в список нарушителей
-                invalidMethods.Add(method.Identifier.Text);
+                var lineNumber = method.GetLocation().GetLineSpan().StartLinePosition.Line + 1;
+                errors.Add(
+                    $"[METHOD001] {fileName}: Method '{method.Identifier.Text}' contains more than {MaxLineCount} lines. " +
+                    $"Line: {lineNumber}. Fix: Split the method into smaller methods with clear responsibilities.");
             }
         }
 
-        return invalidMethods.ToArray();
+        return errors;
     }
 }

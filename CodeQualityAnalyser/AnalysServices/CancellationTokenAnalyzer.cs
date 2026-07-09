@@ -2,48 +2,39 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace CodeQualityAnalyser;
+namespace CodeQualityAnalyser.AnalysServices;
 
-public class CancellationTokenAnalyze : Analyze
+public class CancellationTokenAnalyze : IAnalyser
 {
-    public string[] startTest(string fileContent)
+    public List<string> GetAnalysis(SyntaxTree tree)
     {
-        var invalidMethods = new List<string>();
-
-        SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(fileContent);
-        var root = syntaxTree.GetRoot();
-
-        var methodDeclarations = root.DescendantNodes()
-            .OfType<MethodDeclarationSyntax>();
+        var errors = new List<string>();
+        var fileName = Path.GetFileName(tree.FilePath);
+        var root = tree.GetRoot();
+        var methodDeclarations = root.DescendantNodes().OfType<MethodDeclarationSyntax>();
 
         foreach (var method in methodDeclarations)
         {
-            if (!IsAsyncMethod(method))
+            if (!IsAsyncMethod(method) || HasCancellationTokenParameter(method))
             {
                 continue;
             }
 
-            if (HasCancellationTokenParameter(method))
-            {
-                continue;
-            }
-
-            invalidMethods.Add(method.Identifier.Text);
+            var lineNumber = method.GetLocation().GetLineSpan().StartLinePosition.Line + 1;
+            errors.Add(
+                $"[ASYNC003] {fileName}: Async method '{method.Identifier.Text}' does not accept CancellationToken. " +
+                $"Line: {lineNumber}. Fix: Add CancellationToken cancellationToken = default and pass it to async calls.");
         }
 
-        return invalidMethods.ToArray();
+        return errors;
     }
 
-    private bool IsAsyncMethod(MethodDeclarationSyntax method)
-    {
-        return method.Modifiers.Any(m => m.IsKind(SyntaxKind.AsyncKeyword));
-    }
+    private static bool IsAsyncMethod(MethodDeclarationSyntax method) =>
+        method.Modifiers.Any(m => m.IsKind(SyntaxKind.AsyncKeyword));
 
-    private bool HasCancellationTokenParameter(MethodDeclarationSyntax method)
-    {
-        return method.ParameterList.Parameters.Any(p =>
+    private static bool HasCancellationTokenParameter(MethodDeclarationSyntax method) =>
+        method.ParameterList.Parameters.Any(p =>
             p.Type != null &&
             (p.Type.ToString() == "CancellationToken" ||
              p.Type.ToString() == "System.Threading.CancellationToken"));
-    }
 }

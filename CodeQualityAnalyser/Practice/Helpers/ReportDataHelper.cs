@@ -1,4 +1,3 @@
-using CodeQualityAnalyser.AnalysServices;
 using CodeQualityAnalyser.Explanation;
 using CodeQualityAnalyser.Integration;
 using CodeQualityAnalyser.Models;
@@ -30,12 +29,6 @@ public static class ReportDataHelper
         var enricher = new IssueEnricher(new ExplanationGenerator());
         var runner = new AnalyzerRunner(
             roslynEngine,
-            new IAnalyser[]
-            {
-                new AsyncVoidAnalyser(),
-                new ComplexityAnalyser(),
-                new EmptyCatchAnalyser()
-            },
             enricher);
 
         var issueDtos = runner.RunAndMapAsync(csharpFiles, CancellationToken.None).GetAwaiter().GetResult();
