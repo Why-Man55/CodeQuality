@@ -12,17 +12,14 @@ public class Orchestrator
         new CancellationTokenAnalyzeAdapter(),
         new TaskResultAnalyzerAdapter()
     ];
-
-    // Метод стал async и теперь возвращает Task с массивом результатов
+    
     public static async Task<string[][]> startTest(SyntaxNode text)
     {
         var tasks = new Task<string[]>[_tests.Length];
-
         for (int i = 0; i < _tests.Length; i++)
         {
-            int index = i; // Локальная переменная для безопасного замыкания в многопоточности
-
-            // Task.Run запускает тест параллельно в пуле потоков
+            int index = i;
+         
             tasks[index] = Task.Run(() =>
             {
                 try
@@ -41,12 +38,11 @@ public class Orchestrator
                 }
             });
         }
-        
+    
         string[][] results = await Task.WhenAll(tasks);
 
         // Отправка результатов
         sendResults(results);
-
         return results;
     }
 
